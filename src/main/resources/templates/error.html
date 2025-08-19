@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>오류가 발생했습니다</title>
+  <link rel="stylesheet" href="/bootstrap.min.css">
+</head>
+<body class="bg-light d-flex flex-column min-vh-100 justify-content-center align-items-center">
+
+<div class="container" style="max-width: 600px;">
+  <div class="card border-dark shadow-sm">
+    <div class="card-body text-center">
+      <h2 class="card-title text-danger mb-3">죄송합니다</h2>
+      <p class="card-text mb-2">요청을 처리하는 도중 오류가 발생했습니다.</p>
+      <p class="card-text mb-3">잠시 후 다시 시도해 주세요.</p>
+      <a th:href="@{/}" class="btn btn-primary btn-lg">홈으로 돌아가기</a>
+    </div>
+  </div>
+</body>
+</html>
