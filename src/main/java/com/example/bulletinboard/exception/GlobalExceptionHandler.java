@@ -2,6 +2,7 @@ package com.example.bulletinboard.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,13 @@ public class GlobalExceptionHandler {
 
         // 커스텀 오류 페이지
         return "/error";
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public String handleAuthorizationDenied(AuthorizationDeniedException ex, HttpServletRequest request) {
+        log.error("로그인 예외 발생: URI={}, Message={}", request.getRequestURI(), ex.getMessage(), ex);
+
+        return "/login_form";
     }
 
     // 다른 예외 처리
