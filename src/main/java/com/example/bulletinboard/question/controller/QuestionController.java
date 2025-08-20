@@ -1,6 +1,8 @@
 package com.example.bulletinboard.question.controller;
 
+import com.example.bulletinboard.answer.domain.Answer;
 import com.example.bulletinboard.answer.form.AnswerForm;
+import com.example.bulletinboard.answer.service.AnswerService;
 import com.example.bulletinboard.question.form.QuestionForm;
 import com.example.bulletinboard.question.service.QuestionService;
 import com.example.bulletinboard.question.domain.Question;
@@ -29,6 +31,7 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final UserService userService;
+    private final AnswerService answerService;
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
@@ -41,8 +44,11 @@ public class QuestionController {
 
     @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
                          @ModelAttribute AnswerForm answerForm) {
         Question question = questionService.getQuestion(id);
+        Page<Answer> paging = answerService.getPagedAnswersByQuestion(question, page);
+        model.addAttribute("paging", paging);
         model.addAttribute("question", question);
         return "question_detail";
     }

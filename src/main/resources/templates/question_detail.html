@@ -1,4 +1,4 @@
-<html layout:decorate="~{layout}">
+<html layout:decorate="~{layout}" xmlns:th="http://www.thymeleaf.org">
 <div layout:fragment="content" class="container my-3">
 <div class="container my-3">
     <!-- 질문 -->
@@ -24,11 +24,11 @@
                 </a>
                 <a th:href="@{|/question/modify/${question.id}|}" class="btn btn-sm btn-outline-secondary"
                    sec:authorize="isAuthenticated()"
-                th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}"
+                th:if="${question.author != null and #authentication.getPrincipal()?.getUsername() == question.author?.username}"
                 th:text="수정"></a>
                 <a href="javascript:void(0);" th:data-uri="@{|/question/delete/${question.id}|}"
                 class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}"
+                th:if="${question.author != null and #authentication.getPrincipal()?.getUsername() == question.author?.username}"
                 th:text="삭제"></a>
             </div>
         </div>
@@ -39,7 +39,7 @@
     <h5 class="border-bottom my-3 py-2" th:text="|${#lists.size(question.answerList)}개의 답변이 있음|"></h5>
 
     <!-- 답변 반복 시작 -->
-    <div class="card my-3" th:each="answer : ${question.answerList}">
+    <div class="card my-3" th:each="answer, loop : ${paging}">
         <a th:id="|answer_${answer.id}|"></a>
         <div class="card-body">
 <!--            <div class="card-text" style="white-space: pre-line;" th:text="${answer.context}"></div>-->
@@ -50,7 +50,7 @@
                     <div th:text="${#temporals.format(answer.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
                 <div class="badge bg-light text-dark p-2 text-start">
-                    <div class="mb-2"><span th:if="${question.author != null}" th:text="${question.author.username}"></span></div>
+                    <div class="mb-2"><span th:if="${question.author != null and answer.author != null}" th:text="${answer.author.username}"></span></div>
                     <div th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                 #authentication.getPrincipal().getUsername() == answer.author.username}" th:text="수정"></a>
                 <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${answer.id}|}"
                    class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == question.author.username}"
+                   th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}"
                    th:text="삭제"></a>
             </div>
         </div>
@@ -85,6 +85,29 @@
             <input type="submit" value="답변등록" class="btn btn-primary my-2">
         </div>
     </form>
+
+
+    <!--페이징처리 시작-->
+    <div th:if="${!paging.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!paging.hasPrevious()} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number - 1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(0, paging.totalPages - 1)}"
+                th:if="${page >= paging.number-5 and page <= paging.number+5}"
+                th:classappend="${page == paging.number} ? 'active'" class="page-item">
+                <a th:text="${page}" class="page-link" th:href="@{|?page=${page}|}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!paging.hasNext()} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!--페이징처리 끝-->
 </div>
 <script layout:fragment="script" type="text/javascript">
     const delete_elements = document.getElementsByClassName("delete");

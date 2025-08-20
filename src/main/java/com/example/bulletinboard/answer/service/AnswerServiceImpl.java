@@ -6,9 +6,15 @@ import com.example.bulletinboard.exception.DataNotFoundException;
 import com.example.bulletinboard.question.domain.Question;
 import com.example.bulletinboard.user.domain.SiteUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -55,6 +61,14 @@ public class AnswerServiceImpl implements AnswerService {
     public void vote(Answer answer, SiteUser siteUser) {
         answer.getVoter().add(siteUser);
         answerRepository.save(answer);
+    }
+
+    @Override
+    public Page<Answer> getPagedAnswersByQuestion(Question question, int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
+        return answerRepository.findByQuestion(question, pageable);
     }
 
 
