@@ -45,9 +45,16 @@ public class QuestionController {
     @GetMapping("/detail/{id}")
     public String detail(Model model, @PathVariable("id") Integer id,
                          @RequestParam(value = "page", defaultValue = "0") int page,
-                         @ModelAttribute AnswerForm answerForm) {
+                         @ModelAttribute AnswerForm answerForm, Principal principal) {
         Question question = questionService.getQuestion(id);
         Page<Answer> paging = answerService.getPagedAnswersByQuestion(question, page);
+
+        if (principal != null) {
+            String name = principal.getName();
+            SiteUser siteUser = userService.getUser(name);
+            model.addAttribute("user", siteUser);
+        }
+
         model.addAttribute("paging", paging);
         model.addAttribute("question", question);
         return "question_detail";
