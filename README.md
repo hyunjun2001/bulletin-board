@@ -26,3 +26,8 @@
   - AuthorizationDeniedException을 처리할 수 있도록 메소드 추가
 - TestDataInit 수정
   - Answer부분 paging 처리를 위해 테스트 데이터를 넣을 수 있도록 initLargeAnswerData 추가
+
+---
+
+### V1.2.1
+- 이미 추천한 질문이나 답변에 대해선 투표 버튼 비활성화
